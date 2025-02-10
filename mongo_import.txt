@@ -1,0 +1,1 @@
+mongoimport -d paf23 -c listings --type=json --file=data/listings.json

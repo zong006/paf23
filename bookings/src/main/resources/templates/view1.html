@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landing Page</title>
+</head>
+<body>
+    <h1>Search Our Accomodations</h1>
+    <form th:action="@{/search}" method="get" th:object="${search}">
+        <div>
+            <div>
+                <label for="country">Country </label>
+                <select name="country"> <!-- the select creates the drop down -->
+                    <option th:each="country : ${countries}" th:field="*{country}" th:value="${country}" th:text="${country}"></option>
+                </select>
+                <!-- <input type="text" id="country" th:field="*{country}" placeholder="username"> -->
+                <p th:if="${#fields.hasErrors('country')}" th:errors="*{country}" th:errorclass="error"></p>
+            </div>
+            <br>
+            <div>
+                <label for="numPerson">Number of Person</label>
+                <input type="number" id="numPerson" th:field="*{numPerson}" >
+                <p th:if="${#fields.hasErrors('numPerson')}" th:errors="*{numPerson}" th:errorclass="error"></p>
+            </div>
+            <br>
+            <div>
+                <label >Price Range: </label>
+                <label for="minPrice">Min </label>
+                <input type="number" id="minPrice" th:field="*{minPrice}" >
+                <p th:if="${#fields.hasErrors('minPrice')}" th:errors="*{minPrice}" th:errorclass="error"></p>
+
+                <label for="maxPrice">Max </label>
+                <input type="text" id="maxPrice" th:field="*{maxPrice}" >
+                <p th:if="${#fields.hasErrors('maxPrice')}" th:errors="*{maxPrice}" th:errorclass="error"></p>
+
+            </div>
+            <br>
+            <div>
+                <input type="submit" value="Search">
+            </div>
+        </div>
+    </form>
+</body>
+</html>

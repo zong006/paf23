@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+</head>
+<body>
+    <h1 th:text="'Listing for ' + ${country}"></h1>
+    <a href="/" th:href="@{/}">Go back to form</a>
+    <div th:if="${#lists.isEmpty(results)}">
+        <p>No listings found..</p>
+    </div>
+    <div th:unless="${#lists.isEmpty(results)}">
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Picture</th>
+                
+            </tr>
+            <tr th:each="result : ${results}">
+                <td th:text="${result.name}"></td>
+                <td th:text="${result.price}"></td>
+                <td>
+                    <img th:src="@{${result.images.picture_url}}" width="100" height="100">
+                </td>
+                
+                <td>
+                    <form th:action="@{/details}" method="get">
+                        <input type="hidden" name="_id" id="_id" th:value="${result._id}" />
+                        <input type="submit" value="Details" />
+                     </form>
+                </td>
+            </tr>
+        </table>
+    </div>
+    
+</body>
+</html>
