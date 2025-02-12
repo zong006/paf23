@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import vttp2023.batch3.assessment.paf.bookings.exceptions.ReservationException;
 import vttp2023.batch3.assessment.paf.bookings.models.Booking;
 import vttp2023.batch3.assessment.paf.bookings.models.Search;
 import vttp2023.batch3.assessment.paf.bookings.repositories.ListingsRepository;
@@ -49,34 +50,30 @@ public class ListingsService {
 
 	//TODO: Task 5
 	@Transactional
-	public Document generateReservation(Booking booking, String accId){
+	public String generateReservation(Booking booking, String accId){
 		int vacancy = getVacancy(accId);
 		int minNights = (int) listingsRepository.getMinimumNights(accId).get("minimum_nights");
 		Document response = new Document();
 
-		if (vacancy >= booking.getDuration()){
-
-			if (booking.getDuration()>=minNights){
-				String resvId = UUID.randomUUID().toString().substring(0,8);
-			
-				listingsRepository.createReservation(booking, resvId, accId);
-				listingsRepository.updateVacancy(booking, accId);
-
-				response.put("reservationSuccess", true);
-				response.put("resvId", resvId);
-			}
-			else{
-				// response.put("reservtionSuccess", false);
-				response.put("durationError", "Booking duration does not meet minimun number of nights.");
-			}
-			
+		if (vacancy < booking.getDuration()){
+			throw new ReservationException("Not enough vacancy in the listing.");
 		}
-		else{
-			response.put("vacancyError", "Not enough vacancy in the listing: " + accId);
-			// response.put("reservtionSuccess", false);
+
+		if (booking.getDuration() < minNights){
+			throw new ReservationException("Booking duration does not meet minimun number of nights.");
 		}
-		
-		return response;
+
+		try {
+			String resvId = UUID.randomUUID().toString().substring(0,8);
+					
+			listingsRepository.createReservation(booking, resvId, accId);
+			listingsRepository.updateVacancy(booking, accId);
+
+			return resvId;
+		} catch (Exception e) {
+			
+			throw new ReservationException("Transaction failed: " + e.getMessage());
+		}
 	}
 
 	private int getVacancy(String accId){
