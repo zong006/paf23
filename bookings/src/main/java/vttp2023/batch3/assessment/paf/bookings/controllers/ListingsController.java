@@ -104,30 +104,9 @@ public class ListingsController {
 	public String createBooking(@ModelAttribute Booking booking, HttpSession session, Model model){
 		
 		String accId = (String) session.getAttribute("accId");
-		Document response = listingsService.generateReservation(booking, accId);
+		String resvId = listingsService.generateReservation(booking, accId);
 
-		
-
-		if (response.getBoolean("reservationSuccess", false)){
-			
-			model.addAttribute("resvId", response.getString("resvId"));
-			return "view4";	
-		}
-
-		else{
-			StringBuilder errorMessageBuilder = new StringBuilder("Error/s: ");;
-			if (response.containsKey("durationError")){
-				errorMessageBuilder.append(response.getString("durationError"));
-			}
-			if (response.containsKey("vacancyError")){
-				errorMessageBuilder.append("\n");
-				errorMessageBuilder.append(response.getString("vacancyError"));
-			}
-			model.addAttribute("errorMessage", errorMessageBuilder.toString());
-			return "view3";
-		}
-		
-		
-		
+		model.addAttribute("resvId", resvId);
+		return "view4";	
 	}
 }
